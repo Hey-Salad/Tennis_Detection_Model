@@ -1,5 +1,5 @@
 # 🎾 Tennis Detection Model
-This repository contains a YOLOv8-based tennis detection model that can detect the tennis ball, the player, and the tennis racket and it has been converted for use with SeeedStudio reCamera.
+This repository contains a YOLOv8-based tennis detection model that can detect the tennis ball, the player, and the tennis racket. After training the model, it has been converted for use with SeeedStudio reCamera.
 
 ## Environment Setup
 
