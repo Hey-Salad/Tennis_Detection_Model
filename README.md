@@ -1,4 +1,4 @@
-# Tennis_Detection_Model
+# 🎾 Tennis Detection Model
 This repository contains a YOLOv8-based tennis detection model that can detect the tennis ball, the player, and the tennis racket and it has been converted for use with SeeedStudio reCamera.
 
 ## Environment Setup
@@ -29,7 +29,160 @@ Tue Feb 11 22:23:48 2025
 - Docker
 - tpu-mlir v1.15.1-20250208
 
-## Step-by-Step Conversion Guide
+## Model Training: Tennis Object Detection with YOLOv8
+
+This section implements a Tennis Object Detection Model using YOLOv8 to identify and classify objects related to tennis, such as players, rackets, and tennis balls. The file covers data preparation, training, evaluation, and model export using ONNX.
+
+The goal of this section is to train a YOLOv8 model to detect three key objects in tennis images:
+
+Player
+Racket
+Tennis Ball
+
+The dataset was obtained from Roboflow, and the training was conducted using the Ultralytics YOLOv8 framework in a Google Colab environment.
+
+### Project Structure
+
+├── Tennis Detection Model.ipynb  # Main Colab notebook
+├── /content/tennis_dataset/      # Dataset directory
+│   ├── train/                    # Training set
+│   │   ├── images/               # Training images
+│   │   ├── labels/               # Training labels (.txt)
+│   ├── valid/                    # Validation set
+│   │   ├── images/               # Validation images
+│   │   ├── labels/               # Validation labels (.txt)
+│   ├── data.yaml                 # Dataset configuration
+├── runs/                          # YOLOv8 training runs
+│   ├── detect/trainX/             # Trained model weights and logs
+│   ├── detect/predict/            # Predictions on test images
+
+### Setup and Installation
+
+#### Install YOLOv8 and Dependencies
+
+!pip install ultralytics labelImg
+
+#### Install YOLOv8 and Dependencies
+
+import ultralytics
+ultralytics.checks()
+
+### Dataset Preparation
+
+#### Download Dataset from Roboflow
+
+!mkdir -p /content/tennis_dataset
+!wget -O /content/tennis_dataset.zip "https://app.roboflow.com/ds/bRVIayGOmh?key=YOUR_KEY"
+!unzip /content/tennis_dataset.zip -d /content/tennis_dataset/
+
+#### Ensure Dataset Folder Structure
+
+import os
+required_dirs = [
+    "/content/tennis_dataset/train/images",
+    "/content/tennis_dataset/train/labels",
+    "/content/tennis_dataset/valid/images",
+    "/content/tennis_dataset/valid/labels"
+]
+for dir_path in required_dirs:
+    os.makedirs(dir_path, exist_ok=True)
+    
+#### Split Data into Training and Validation
+
+import shutil, random
+image_files = os.listdir("/content/tennis_dataset/train/images")
+random.shuffle(image_files)
+num_val = int(len(image_files) * 0.2)
+
+for img_file in image_files[:num_val]:
+    label_file = img_file.replace(".jpg", ".txt")
+    shutil.move(f"/content/tennis_dataset/train/images/{img_file}", "/content/tennis_dataset/valid/images/")
+    shutil.move(f"/content/tennis_dataset/train/labels/{label_file}", "/content/tennis_dataset/valid/labels/")
+
+### Updating data.yaml
+
+train: /content/tennis_dataset/train/images
+val: /content/tennis_dataset/valid/images
+
+nc: 3  # Number of classes
+names: ['Player', 'Racket', 'Tennis Ball']
+
+To ensure the correct object detection labels, I reordered them to:
+
+Player
+Racket
+Tennis Ball
+
+### Training the YOLOv8 Model
+
+#### Load YOLOv8 Nano
+
+from ultralytics import YOLO
+model = YOLO("yolov8n.pt")  # Using the nano version for fast training
+
+#### Train the Model
+
+model.train(
+    data="/content/tennis_dataset/data.yaml",
+    epochs=50,
+    batch=8,
+    imgsz=640,
+    device="cpu"
+)
+
+Epochs: 50 training cycles
+Batch size: 8
+Image size: 640x640
+Device: CPU (can use "cuda" for GPU)
+
+### Model Performance & Validation
+
+#### Check Training Logs
+
+TensorBoard logs are stored in runs/detect/trainX/
+Model performance is evaluated using mAP (Mean Average Precision).
+
+#### Test on Sample Images
+
+results = model.predict("/content/test_image.jpg", save=True, conf=0.5)
+
+Predictions are saved in runs/detect/predict/.
+
+### Model Export to ONNX
+
+model.export(format="onnx")
+
+### Challenges Faced & Fixes
+
+🔴 Issue 1: Dataset nc Value Incorrect
+Problem: Initially, the dataset nc (number of classes) was stuck at 1 instead of 3.
+Fix: Ensured data.yaml was properly updated before training.
+
+🔴 Issue 2: Misclassification of Objects
+Problem: The model confused tennis players with tennis balls.
+Fix: Reordered the label mapping and retrained the model.
+
+🔴 Issue 3: Incorrect Labels in Prediction
+Problem: Labels were swapped in the test results.
+Fix: Manually verified the annotation files (.txt labels) and retrained.
+
+### Key Takeaways
+
+Data labeling & preprocessing are crucial – ensure label mappings are correct.
+Training with proper augmentation & epochs improves model performance.
+ONNX export allows wider compatibility for real-world deployment.
+
+### Future Improvements
+
+✅ Train with a larger dataset for better generalization.
+✅ Use a stronger YOLOv8 variant (e.g., yolov8m.pt) for better accuracy.
+✅ Deploy the model in a web app using Flask or FastAPI.
+ 
+## ONNX to cvimodel Step-by-Step Conversion Guide
+
+The trained model is developed in YOLOv8 using Ultralytics, It has to be converted and quantized into a format compatible with reCamera. 
+Based on the SeeedStudio provided guide, reCamera supports models in ONNX format, which means we'll first convert the model to ONNX, then to MLIR, and finally into a cvimodel format for deployment.
+
 
 ### 1. Setup Docker Environment
 
