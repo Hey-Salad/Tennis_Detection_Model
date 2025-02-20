@@ -200,7 +200,9 @@ Fix: Manually verified the annotation files (.txt labels) and retrained.
 ### Future Improvements
 
 ✅ Train with a larger dataset for better generalization.
+
 ✅ Use a stronger YOLOv8 variant (e.g., yolov8m.pt) for better accuracy.
+
 ✅ Deploy the model in a web app using Flask or FastAPI.
  
 ## ONNX to cvimodel Step-by-Step Conversion Guide
