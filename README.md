@@ -37,9 +37,9 @@ This section implements a Tennis Object Detection Model using YOLOv8 to identify
 
 The goal of this section is to train a YOLOv8 model to detect three key objects in tennis images:
 
-Player
-Racket
-Tennis Ball
+- Player
+- Racket
+- Tennis Ball
 
 The dataset was obtained from Roboflow, and the training was conducted using the Ultralytics YOLOv8 framework in a Google Colab environment.
 
@@ -126,9 +126,9 @@ names: ['Player', 'Racket', 'Tennis Ball']
 
 To ensure the correct object detection labels, I reordered them to:
 
-Player
-Racket
-Tennis Ball
+- Player
+- Racket
+- Tennis Ball
 
 ### Training the YOLOv8 Model
 
@@ -151,10 +151,10 @@ model.train(
 )
 ```
 
-Epochs: 50 training cycles
-Batch size: 8
-Image size: 640x640
-Device: CPU (can use "cuda" for GPU)
+- Epochs: 50 training cycles
+- Batch size: 8
+- Image size: 640x640
+- Device: CPU (can use "cuda" for GPU)
 
 ### Model Performance & Validation
 
@@ -193,9 +193,9 @@ Fix: Manually verified the annotation files (.txt labels) and retrained.
 
 ### Key Takeaways
 
-Data labeling & preprocessing are crucial – ensure label mappings are correct.
-Training with proper augmentation & epochs improves model performance.
-ONNX export allows wider compatibility for real-world deployment.
+- Data labeling & preprocessing are crucial – ensure label mappings are correct.
+- Training with proper augmentation & epochs improves model performance.
+- ONNX export allows wider compatibility for real-world deployment.
 
 ### Future Improvements
 
