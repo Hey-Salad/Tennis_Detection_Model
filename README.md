@@ -24,10 +24,12 @@ Tue Feb 11 22:23:48 2025
 
 ### Software Requirements
 
+```bash
 - Ubuntu 22.04
 - Python 3.10
 - Docker
 - tpu-mlir v1.15.1-20250208
+```
 
 ## Model Training: Tennis Object Detection with YOLOv8
 
@@ -43,6 +45,7 @@ The dataset was obtained from Roboflow, and the training was conducted using the
 
 ### Project Structure
 
+```bash
 ├── Tennis Detection Model.ipynb  # Main Colab notebook
 ├── /content/tennis_dataset/      # Dataset directory
 │   ├── train/                    # Training set
@@ -56,27 +59,35 @@ The dataset was obtained from Roboflow, and the training was conducted using the
 │   ├── detect/trainX/             # Trained model weights and logs
 │   ├── detect/predict/            # Predictions on test images
 
+```
 ### Setup and Installation
 
 #### Install YOLOv8 and Dependencies
 
+```bash
 !pip install ultralytics labelImg
+```
 
 #### Install YOLOv8 and Dependencies
 
+```bash
 import ultralytics
 ultralytics.checks()
+```
 
 ### Dataset Preparation
 
 #### Download Dataset from Roboflow
 
+```bash
 !mkdir -p /content/tennis_dataset
 !wget -O /content/tennis_dataset.zip "https://app.roboflow.com/ds/bRVIayGOmh?key=YOUR_KEY"
 !unzip /content/tennis_dataset.zip -d /content/tennis_dataset/
+```
 
 #### Ensure Dataset Folder Structure
 
+```bash
 import os
 required_dirs = [
     "/content/tennis_dataset/train/images",
@@ -86,9 +97,12 @@ required_dirs = [
 ]
 for dir_path in required_dirs:
     os.makedirs(dir_path, exist_ok=True)
-    
+
+```
+
 #### Split Data into Training and Validation
 
+```bash
 import shutil, random
 image_files = os.listdir("/content/tennis_dataset/train/images")
 random.shuffle(image_files)
@@ -98,14 +112,17 @@ for img_file in image_files[:num_val]:
     label_file = img_file.replace(".jpg", ".txt")
     shutil.move(f"/content/tennis_dataset/train/images/{img_file}", "/content/tennis_dataset/valid/images/")
     shutil.move(f"/content/tennis_dataset/train/labels/{label_file}", "/content/tennis_dataset/valid/labels/")
+```
 
 ### Updating data.yaml
 
+```bash
 train: /content/tennis_dataset/train/images
 val: /content/tennis_dataset/valid/images
 
 nc: 3  # Number of classes
 names: ['Player', 'Racket', 'Tennis Ball']
+```
 
 To ensure the correct object detection labels, I reordered them to:
 
@@ -117,18 +134,22 @@ Tennis Ball
 
 #### Load YOLOv8 Nano
 
+```bash
 from ultralytics import YOLO
 model = YOLO("yolov8n.pt")  # Using the nano version for fast training
+```
 
 #### Train the Model
 
+```bash
 model.train(
     data="/content/tennis_dataset/data.yaml",
     epochs=50,
     batch=8,
     imgsz=640,
-    device="cpu"
+    device="CPU"
 )
+```
 
 Epochs: 50 training cycles
 Batch size: 8
@@ -139,18 +160,22 @@ Device: CPU (can use "cuda" for GPU)
 
 #### Check Training Logs
 
-TensorBoard logs are stored in runs/detect/trainX/
+TensorBoard logs are stored in ```bash runs/detect/trainX/```.
 Model performance is evaluated using mAP (Mean Average Precision).
 
 #### Test on Sample Images
 
+```bash
 results = model.predict("/content/test_image.jpg", save=True, conf=0.5)
+```
 
-Predictions are saved in runs/detect/predict/.
+Predictions are saved in ```bash runs/detect/predict/```.
 
 ### Model Export to ONNX
 
+```bash
 model.export(format="onnx")
+```
 
 ### Challenges Faced & Fixes
 
