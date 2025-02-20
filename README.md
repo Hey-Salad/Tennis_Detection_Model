@@ -160,7 +160,7 @@ Device: CPU (can use "cuda" for GPU)
 
 #### Check Training Logs
 
-TensorBoard logs are stored in ```bash runs/detect/trainX/```.
+TensorBoard logs are stored in ```runs/detect/trainX/```.
 Model performance is evaluated using mAP (Mean Average Precision).
 
 #### Test on Sample Images
@@ -169,7 +169,7 @@ Model performance is evaluated using mAP (Mean Average Precision).
 results = model.predict("/content/test_image.jpg", save=True, conf=0.5)
 ```
 
-Predictions are saved in ```bash runs/detect/predict/```.
+Predictions are saved in ```runs/detect/predict/```.
 
 ### Model Export to ONNX
 
