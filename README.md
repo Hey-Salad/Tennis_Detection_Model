@@ -171,6 +171,11 @@ results = model.predict("/content/test_image.jpg", save=True, conf=0.5)
 
 Predictions are saved in ```runs/detect/predict/```.
 
+Sample output:
+
+![test_image](https://github.com/user-attachments/assets/ee4d6e78-c8cf-459e-91ea-e50d037a4e4e)
+
+
 ### Model Export to ONNX
 
 ```bash
